@@ -1,740 +1,568 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>King Guesser - Progressive Guessing Game</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <header class="site-header">
-        <h1>King Guesser</h1>
-        <div class="header-controls">
-            <div class="player-inputs">
-                <label for="player-name">Name</label>
-                <input id="player-name" type="text" placeholder="Player" value="Player">
-                <label for="start-level">Start Level</label>
-                <select id="start-level"> 
-                    <!-- options filled by JS -->
-                </select>
-            </div>
-            <div class="header-actions">
-                <button id="leaderboard-btn" class="btn-outline" onclick="toggleLeaderboard()">Leaderboard</button>
-                <button id="reset-scores-btn" class="btn-danger" onclick="resetScores()">Reset Scores</button>
-                <div class="header-toggle-group">
-                    <label for="confetti-toggle" style="display:inline-flex; align-items:center; gap:6px; margin:0 6px;">
-                    <input id="confetti-toggle" type="checkbox" checked />Confetti
-                </label>
-                <label for="sound-toggle" style="display:inline-flex; align-items:center; gap:6px; margin-left:8px;">
-                    <input id="sound-toggle" type="checkbox" checked />Sound
-                </label>
-                <label class="subtle">Vol: <input id="sound-volume" type="range" min="0" max="1" step="0.05" value="0.9" style="vertical-align:middle; width:100px; margin-left:6px;" /></label>
-                </div>
-            </div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no"
+    />
+
+    <!-- Primary Meta Tags -->
+    <title>King Guesser - Master of Numbers</title>
+    <meta name="title" content="King Guesser - Master of Numbers" />
+    <meta
+      name="description"
+      content="The ultimate progressive number guessing challenge. Beat all 20 levels to become a champion!"
+    />
+    <meta name="author" content="Kingsley" />
+    <meta
+      name="keywords"
+      content="number guessing game, puzzle game, brain game, mobile game, PWA"
+    />
+
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#1a0533" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="King Guesser" />
+    <meta name="application-name" content="King Guesser" />
+    <meta name="msapplication-TileColor" content="#1a0533" />
+    <meta name="msapplication-tap-highlight" content="no" />
+
+    <!-- Icons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="icons/icon-16.png" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="icons/apple-touch-icon.png"
+    />
+    <link rel="manifest" href="manifest.json" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="" />
+    <meta property="og:title" content="King Guesser - Master of Numbers" />
+    <meta
+      property="og:description"
+      content="The ultimate progressive number guessing challenge. Beat all 20 levels to become a champion!"
+    />
+    <meta property="og:image" content="images/og-image.png" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="" />
+    <meta property="twitter:title" content="King Guesser - Master of Numbers" />
+    <meta
+      property="twitter:description"
+      content="The ultimate progressive number guessing challenge. Beat all 20 levels to become a champion!"
+    />
+    <meta property="twitter:image" content="images/og-image.png" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="animations.css" />
+  </head>
+  <body>
+    <!-- ============================================================
+         HEADER
+         ============================================================ -->
+    <header class="site-header glass-card">
+      <div class="header-content">
+        <h1 class="header-title">👑 King Guesser</h1>
+        <div class="header-actions">
+          <button
+            id="leaderboard-btn"
+            class="btn btn-ghost btn-icon"
+            aria-label="Leaderboard"
+          >
+            🏆
+          </button>
+          <button
+            id="settings-btn"
+            class="btn btn-ghost btn-icon"
+            aria-label="Settings"
+          >
+            ⚙️
+          </button>
         </div>
+      </div>
     </header>
 
-    <div class="game-container">
-        <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100">
-            <div class="progress-fill" id="progress-fill"></div>
+    <!-- ============================================================
+         MAIN GAME CONTAINER
+         ============================================================ -->
+    <div class="app-container">
+      <main class="game-container">
+        <!-- Level Journey Track -->
+        <div
+          id="journey-track"
+          class="journey-track glass-card"
+          aria-label="Level progress"
+        >
+          <!-- Dynamically populated -->
         </div>
-        <div id="level-info" class="level-info">Welcome to King Guesser! Click Start to begin.</div>
-        <div class="input-group">
-            <input type="number" id="guess-input" placeholder="Enter your guess" min="1">
-            <button id="submit-btn" onclick="submitGuess()">Submit Guess</button>
-            <button id="hint-btn" onclick="giveHint()" style="display: none;">💡 Hint (-1)</button>
-        </div>
-        <div class="hint-note">Tip: Using a hint consumes one guess. Use it strategically.</div>
-        <div class="controls-row">
-            <button id="start-btn" onclick="startGame()" class="btn-primary">Start Game</button>
-            <button id="pause-btn" onclick="togglePause()" style="display:none;" class="btn-outline">Pause</button>
-            <span id="level-chosen" class="subtle"></span>
-        </div>
-        <div id="message" class="message"></div>
-        <div id="best-per-level" class="best-per-level">Best per level: <span id="best-list">—</span></div>
-        <div id="stats" class="stats"></div>
-        <button id="restart-btn" class="restart btn-outline" onclick="restartGame()" style="display: none;">Restart Game</button>
-    
-    <!-- Leaderboard / Scores Modal -->
-    <div id="leaderboard-modal" class="modal" role="dialog" aria-modal="true" style="display:none;">
-        <div class="modal-inner">
-            <div class="modal-header">
-                <h3>Leaderboard</h3>
-                <div>
-                    <!-- Close (X) button -->
-                    <button class="btn-outline" aria-label="Close leaderboard" onclick="toggleLeaderboard()">✕</button>
-                    <button id="filter-my-scores" class="btn-outline" onclick="filterMyScores()">My Scores</button>
-                    <button id="filter-all" class="btn-outline" onclick="updateLeaderboard()">All</button>
-                </div>
+
+        <!-- Game Card -->
+        <section class="game-card glass-card animate-fade-in-up">
+          <!-- Header: Level Badge & Info -->
+          <div class="game-card__header">
+            <div id="level-badge" class="level-badge animate-pulse">1</div>
+            <div id="level-info" class="level-info text-center">
+              <strong>Welcome to King Guesser!</strong>
+              <br />
+              <span class="text-muted">Click Start to begin your journey</span>
             </div>
-            <div class="modal-body">
-                <!-- Tabs: Local / Global -->
-                <div class="leaderboard-tabs">
-                    <button id="tab-local" class="btn-outline" onclick="updateLeaderboard(true)">Local</button>
-                    <button id="tab-global" class="btn-outline" onclick="fetchGlobalLeaderboard()">Global</button>
-                </div>
-                <div class="leaderboard-actions" style="display:flex; gap:8px; align-items:center; margin-bottom:8px;">
-                    <div class="leaderboard-metrics subtle" id="leaderboard-metrics">Top Results</div>
-                    <div style="flex:1"></div>
-                    <label for="per-page" class="subtle">Rows per page:</label>
-                    <select id="per-page" onchange="setPerPage(this.value)"><option>5</option><option selected>10</option><option>25</option></select>
-                </div>
-                <div class="leaderboard-table-wrapper">
-                    <table class="leaderboard-table" id="leaderboard-table" aria-live="polite">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Player <button class="sort-btn" data-sort="name" onclick="setSort('name')">⇅</button></th>
-                                <th>Level <button class="sort-btn" data-sort="levelCompleted" onclick="setSort('levelCompleted')">⇅</button></th>
-                                <th>Guesses <button class="sort-btn" data-sort="guesses" onclick="setSort('guesses')">⇅</button></th>
-                                <th>Time <button class="sort-btn" data-sort="time" onclick="setSort('time')">⇅</button></th>
-                                <th>Start <button class="sort-btn" data-sort="startLevel" onclick="setSort('startLevel')">⇅</button></th>
-                                <th>Date</th>
-                            </tr>
-                        </thead>
-                        <tbody id="leaderboard-table-body"></tbody>
-                    </table>
-                </div>
-                <div class="leaders-pagination" style="display:flex; gap:8px; align-items:center; justify-content:center; margin-top:10px;">
-                    <button id="prev-page" class="btn-outline" onclick="setPage(currentPage-1)">Prev</button>
-                    <div id="page-info" class="subtle">Page 1</div>
-                    <button id="next-page" class="btn-outline" onclick="setPage(currentPage+1)">Next</button>
-                </div>
+          </div>
+
+          <!-- Progress Bar -->
+          <div
+            class="progress"
+            role="progressbar"
+            aria-valuemin="0"
+            aria-valuemax="100"
+          >
+            <div
+              id="progress-fill"
+              class="progress-fill"
+              style="width: 0%"
+            ></div>
+          </div>
+
+          <!-- Range Visualizer -->
+          <div class="range-visualizer">
+            <div
+              id="range-active"
+              class="range-active"
+              style="left: 0%; width: 100%"
+            ></div>
+            <div class="range-labels">
+              <span id="range-min">1</span>
+              <span id="range-max">10</span>
             </div>
-        </div>
-    </div>
+          </div>
+
+          <!-- Game Body -->
+          <div class="game-card__body">
+            <!-- Player Setup (shown before game starts) -->
+            <div id="setup-section" class="setup-section">
+              <div class="input-group">
+                <label class="input-label" for="player-name">Your Name</label>
+                <input
+                  type="text"
+                  id="player-name"
+                  class="input"
+                  placeholder="Enter your name"
+                  value="Player"
+                  maxlength="20"
+                  autocomplete="nickname"
+                />
+              </div>
+
+              <div class="input-group">
+                <label class="input-label" for="start-level">Start Level</label>
+                <select id="start-level" class="select">
+                  <!-- Options populated by JS -->
+                </select>
+              </div>
+            </div>
+
+            <!-- Guess Input (shown during game) -->
+            <div class="input-group">
+              <label class="input-label" for="guess-input">Your Guess</label>
+              <input
+                type="number"
+                id="guess-input"
+                class="input input-number"
+                placeholder="?"
+                min="1"
+                inputmode="numeric"
+                pattern="[0-9]*"
+                autocomplete="off"
+              />
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="game-card__actions">
+              <button
+                id="hint-btn"
+                class="btn btn-secondary"
+                style="display: none"
+              >
+                💡 Hint
+              </button>
+              <button
+                id="submit-btn"
+                class="btn btn-primary btn-lg"
+                style="display: none"
+              >
+                Submit Guess
+              </button>
+              <button id="start-btn" class="btn btn-primary btn-lg">
+                🎮 Start Game
+              </button>
+              <button
+                id="pause-btn"
+                class="btn btn-secondary"
+                style="display: none"
+              >
+                ⏸ Pause
+              </button>
+              <button
+                id="restart-btn"
+                class="btn btn-primary"
+                style="display: none"
+              >
+                🔄 Play Again
+              </button>
+            </div>
+
+            <span class="hint-text"
+              >💡 Using a hint costs 1 guess. Use strategically!</span
+            >
+          </div>
+
+          <!-- Message / Feedback Zone -->
+          <div id="message" class="message" aria-live="polite"></div>
+
+          <!-- Stats Grid -->
+          <div id="stats-grid" class="stats-grid">
+            <div class="stat-item">
+              <span class="stat-value">—</span>
+              <span class="stat-label">Remaining</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value">0</span>
+              <span class="stat-label">Levels</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value">—</span>
+              <span class="stat-label">Avg/Level</span>
+            </div>
+          </div>
+        </section>
+      </main>
     </div>
 
-    <!-- Confetti canvas overlay -->
-    <canvas id="confetti-canvas" style="position:fixed;left:0;top:0;pointer-events:none;display:none;z-index:9999;" aria-hidden="true"></canvas>
+    <!-- ============================================================
+         BOTTOM NAVIGATION (Mobile)
+         ============================================================ -->
+    <nav id="bottom-nav" class="bottom-nav">
+      <div class="bottom-nav-content">
+        <button class="nav-item" data-action="hint" id="nav-hint">
+          <span class="nav-item-icon">💡</span>
+          <span class="nav-item-label">Hint</span>
+        </button>
+        <button
+          class="nav-item nav-item--primary"
+          data-action="submit"
+          id="nav-submit"
+        >
+          <span class="nav-item-icon">✓</span>
+          <span class="nav-item-label">Guess</span>
+        </button>
+        <button class="nav-item" data-action="leaderboard" id="nav-leaderboard">
+          <span class="nav-item-icon">🏆</span>
+          <span class="nav-item-label">Scores</span>
+        </button>
+      </div>
+    </nav>
 
+    <!-- ============================================================
+         LEADERBOARD MODAL
+         ============================================================ -->
+    <div
+      id="leaderboard-modal"
+      class="modal-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="leaderboard-title"
+    >
+      <div class="modal glass-card">
+        <div class="modal-header">
+          <h3 id="leaderboard-title" class="modal-title">🏆 Leaderboard</h3>
+          <button class="modal-close btn btn-ghost btn-icon" aria-label="Close">
+            ✕
+          </button>
+        </div>
+        <div class="modal-body">
+          <!-- Tabs -->
+          <div class="flex gap-2 mb-4">
+            <button id="tab-local" class="btn btn-secondary btn-sm">
+              Local
+            </button>
+            <button id="tab-global" class="btn btn-ghost btn-sm">Global</button>
+          </div>
+
+          <!-- Table -->
+          <div class="leaderboard-container">
+            <table class="leaderboard-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Player</th>
+                  <th>Level</th>
+                  <th>Guesses</th>
+                  <th>Time</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody id="leaderboard-table-body">
+                <tr>
+                  <td colspan="6" class="text-center text-muted">
+                    No scores yet
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination -->
+          <div class="flex justify-center gap-3 mt-4">
+            <button id="prev-page" class="btn btn-secondary btn-sm">
+              ← Prev
+            </button>
+            <span id="page-info" class="text-muted">Page 1 / 1</span>
+            <button id="next-page" class="btn btn-secondary btn-sm">
+              Next →
+            </button>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="reset-scores-btn" class="btn btn-danger btn-sm">
+            Reset Scores
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         SETTINGS MODAL
+         ============================================================ -->
+    <div
+      id="settings-modal"
+      class="modal-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="settings-title"
+    >
+      <div class="modal glass-card">
+        <div class="modal-header">
+          <h3 id="settings-title" class="modal-title">⚙️ Settings</h3>
+          <button class="modal-close btn btn-ghost btn-icon" aria-label="Close">
+            ✕
+          </button>
+        </div>
+        <div class="modal-body">
+          <!-- Sound Toggle -->
+          <div class="flex justify-between items-center mb-4">
+            <span>Sound Effects</span>
+            <label class="toggle">
+              <input
+                type="checkbox"
+                id="sound-toggle"
+                class="toggle-input"
+                checked
+              />
+              <span class="toggle-track">
+                <span class="toggle-thumb"></span>
+              </span>
+            </label>
+          </div>
+
+          <!-- Volume Slider -->
+          <div class="flex justify-between items-center mb-4">
+            <span>Volume</span>
+            <input
+              type="range"
+              id="sound-volume"
+              class="volume-slider"
+              min="0"
+              max="1"
+              step="0.1"
+              value="0.9"
+            />
+          </div>
+
+          <!-- Confetti Toggle -->
+          <div class="flex justify-between items-center mb-4">
+            <span>Confetti Effects</span>
+            <label class="toggle">
+              <input
+                type="checkbox"
+                id="confetti-toggle"
+                class="toggle-input"
+                checked
+              />
+              <span class="toggle-track">
+                <span class="toggle-thumb"></span>
+              </span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         VICTORY MODAL (Score Card)
+         ============================================================ -->
+    <div
+      id="victory-modal"
+      class="modal-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="victory-title"
+    >
+      <div class="modal glass-card victory-modal">
+        <!-- Card Content -->
+        <div class="victory-card">
+          <!-- Logo -->
+          <img src="images/logo.png" alt="King Guesser" class="victory-logo" />
+          
+          <!-- Title -->
+          <h2 class="victory-title">🎉 Level Complete!</h2>
+          
+          <!-- Level Badge -->
+          <div class="victory-level-badge">
+            <span class="victory-level-label">LEVEL</span>
+            <span class="victory-level">1</span>
+          </div>
+          
+          <!-- Star Rating -->
+          <div class="victory-stars" aria-label="Star rating">
+            ⭐⭐⭐⭐⭐
+          </div>
+          
+          <!-- Stats Grid -->
+          <div class="victory-stats">
+            <div class="victory-stat">
+              <span class="victory-stat-value victory-guesses">0</span>
+              <span class="victory-stat-label">Guesses</span>
+            </div>
+            <div class="victory-stat">
+              <span class="victory-stat-value victory-time">0s</span>
+              <span class="victory-stat-label">Time</span>
+            </div>
+            <div class="victory-stat">
+              <span class="victory-stat-value victory-accuracy">100%</span>
+              <span class="victory-stat-label">Accuracy</span>
+            </div>
+          </div>
+          
+          <!-- Share Buttons -->
+          <div class="victory-share">
+            <p class="victory-share-label">Share your score:</p>
+            <div class="victory-share-buttons">
+              <button id="share-whatsapp" class="share-btn share-btn--whatsapp" title="Share on WhatsApp">
+                <span>📱</span> WhatsApp
+              </button>
+              <button id="share-twitter" class="share-btn share-btn--twitter" title="Share on Twitter">
+                <span>🐦</span> Twitter
+              </button>
+              <button id="share-download" class="share-btn share-btn--download" title="Download Image">
+                <span>💾</span> Save
+              </button>
+            </div>
+          </div>
+          
+          <!-- Action Buttons -->
+          <div class="victory-actions">
+            <button id="victory-continue" class="btn btn-primary btn-lg">
+              ➡️ Next Level
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         CELEBRATION OVERLAY
+         ============================================================ -->
+    <div
+      id="celebration-overlay"
+      class="celebration-overlay"
+      hidden
+      aria-hidden="true"
+    >
+      <canvas id="confetti-canvas"></canvas>
+    </div>
+
+    <!-- ============================================================
+         INSTALL PROMPT
+         ============================================================ -->
+    <div id="install-prompt" class="install-prompt glass-card" hidden>
+      <img
+        src="icons/icon-72.png"
+        alt="King Guesser"
+        class="install-prompt__icon"
+      />
+      <div class="install-prompt__content">
+        <div class="install-prompt__title">Install King Guesser</div>
+        <div class="install-prompt__text">
+          Add to your home screen for the best experience!
+        </div>
+      </div>
+      <div class="install-prompt__actions">
+        <button id="install-dismiss" class="btn btn-ghost btn-sm">Later</button>
+        <button id="install-btn" class="btn btn-primary btn-sm">Install</button>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         SCRIPTS
+         ============================================================ -->
+    <script src="app.js"></script>
+
+    <!-- Additional Event Bindings for Bottom Nav -->
     <script>
-        let currentLevel = 1;
-        let secretNumber;
-        let guessLimit;
-        let maxNumber;
-        let guessesTaken = 0;
-        let gameActive = false;
-        let totalGuesses = 0;
-        let levelGuesses = [];
-        let minRange = 1;
-        let maxRange;
-        let levelStartTime = null;
+      // Bottom nav quick actions
+      document.getElementById("nav-hint")?.addEventListener("click", () => {
+        if (window.Game) Game.giveHint();
+      });
 
-        function getDifficulty(level) {
-            switch (level) {
-                case 1: return { maxNumber: 10, guessLimit: 5 };
-                case 2: return { maxNumber: 50, guessLimit: 7 };
-                case 3: return { maxNumber: 100, guessLimit: 10 };
-                case 4: return { maxNumber: 200, guessLimit: 12 };
-                case 5: return { maxNumber: 500, guessLimit: 15 };
-                case 6: return { maxNumber: 1000, guessLimit: 18 };
-                case 7: return { maxNumber: 2000, guessLimit: 20 };
-                case 8: return { maxNumber: 5000, guessLimit: 22 };
-                case 9: return { maxNumber: 10000, guessLimit: 25 };
-                case 10: return { maxNumber: 50000, guessLimit: 30 };
-                case 11: return { maxNumber: 100000, guessLimit: 35 };
-                case 12: return { maxNumber: 200000, guessLimit: 40 };
-                case 13: return { maxNumber: 500000, guessLimit: 45 };
-                case 14: return { maxNumber: 1000000, guessLimit: 50 };
-                case 15: return { maxNumber: 2000000, guessLimit: 55 };
-                case 16: return { maxNumber: 5000000, guessLimit: 60 };
-                case 17: return { maxNumber: 10000000, guessLimit: 65 };
-                case 18: return { maxNumber: 20000000, guessLimit: 70 };
-                case 19: return { maxNumber: 50000000, guessLimit: 75 };
-                case 20: return { maxNumber: 100000000, guessLimit: 80 };
-                default: return { maxNumber: 10, guessLimit: 5 };
-            }
-        }
+      document.getElementById("nav-submit")?.addEventListener("click", () => {
+        if (window.Game) Game.submitGuess();
+      });
 
-        // Progress based on starting / ending levels
-        function updateProgress() {
-            const startLV = parseInt(document.getElementById('start-level').value) || 1;
-            const totalLevels = 20 - startLV + 1;
-            const completed = Math.max(0, Math.min(currentLevel - startLV, totalLevels));
-            const progress = totalLevels === 0 ? 100 : ((completed / totalLevels) * 100);
-            document.getElementById('progress-fill').style.width = Math.round(progress) + '%';
-        }
-
-        function updateStats() {
-            const avg = levelGuesses.length > 0 ? (totalGuesses / levelGuesses.length).toFixed(1) : 0;
-            // If player has chosen a start level, show it in the stats
-            const startLV = parseInt(document.getElementById('start-level').value) || 1;
-            const levelsCompleted = levelGuesses.length;
-            // compute personal best for the player (lowest guesses in any recorded level)
-            const allScores = getScores();
-            const playerName = getPlayerName();
-            const playerScores = allScores.filter(s => s.name === playerName);
-            const personalBest = playerScores.length > 0 ? Math.min(...playerScores.map(s => s.guesses)) : '-';
-            const personalFastest = playerScores.length > 0 ? Math.min(...playerScores.map(s => s.timeSpentSeconds || Number.MAX_SAFE_INTEGER)) : '-';
-            const highestLevel = playerScores.length > 0 ? Math.max(...playerScores.map(s => s.levelCompleted)) : '-';
-            document.getElementById('stats').innerText = `Player: ${playerName} | Total Guesses: ${totalGuesses} | Levels Completed: ${levelsCompleted} | Avg / Level: ${avg} | Start: ${startLV} | Best: ${personalBest}g | Fastest: ${personalFastest === Number.MAX_SAFE_INTEGER ? '-' : personalFastest + 's'} | Highest: ${highestLevel}`;
-        }
-
-        function startGame() {
-            const startLV = parseInt(document.getElementById('start-level').value) || 1;
-            currentLevel = startLV;
-            totalGuesses = 0;
-            levelGuesses = [];
-            gameActive = true;
-            document.getElementById('start-btn').style.display = 'none';
-            document.getElementById('pause-btn').style.display = 'inline-block';
-            document.getElementById('restart-btn').style.display = 'none';
-            updateProgress();
-            updateStats();
-            // Ensure audio context is allowed by user gesture
-            if (document.getElementById('sound-toggle').checked) {
-                try { ensureAudioContext().resume(); } catch(e) {}
-            }
-            startLevel();
-        }
-
-        function startLevel() {
-            const difficulty = getDifficulty(currentLevel);
-            maxNumber = difficulty.maxNumber;
-            guessLimit = difficulty.guessLimit;
-            secretNumber = Math.floor(Math.random() * maxNumber) + 1;
-            guessesTaken = 0;
-            levelStartTime = performance.now();
-            minRange = 1;
-            maxRange = maxNumber;
-            document.getElementById('level-info').innerText = `Level ${currentLevel}: Guess a number from 1 to ${maxNumber}. You have ${guessLimit} tries.`;
-            document.getElementById('message').innerText = '';
-            document.getElementById('guess-input').value = '';
-            document.getElementById('guess-input').max = maxNumber;
-            document.getElementById('guess-input').min = 1;
-            document.getElementById('hint-btn').style.display = 'inline-block';
-            updateProgress();
-            document.getElementById('level-chosen').innerText = `Current Level: ${currentLevel}`;
-        }
-
-        function giveHint() {
-            if (!gameActive || guessesTaken >= guessLimit) return;
-            guessesTaken++;
-            totalGuesses++;
-            const mid = Math.floor((minRange + maxRange) / 2);
-            if (secretNumber <= mid) {
-                maxRange = mid;
-                document.getElementById('message').innerHTML = '<span class="info">Hint: The number is between ' + minRange + ' and ' + maxRange + '. (Guess used)</span>';
-            } else {
-                minRange = mid + 1;
-                document.getElementById('message').innerHTML = '<span class="info">Hint: The number is between ' + minRange + ' and ' + maxRange + '. (Guess used)</span>';
-            }
-            if (guessesTaken >= guessLimit) {
-                document.getElementById('message').innerHTML += '<br><span class="failure">No more guesses! The number was ' + secretNumber + '.</span>';
-                setTimeout(startLevel, 3000);
-            }
-            updateStats();
-        }
-
-        function submitGuess() {
-            if (!gameActive) return;
-            const guessInput = document.getElementById('guess-input');
-            const userGuess = parseInt(guessInput.value);
-            if (isNaN(userGuess) || userGuess < 1 || userGuess > maxNumber) {
-                document.getElementById('message').innerHTML = '<span class="failure">Invalid input. Please enter a number between 1 and ' + maxNumber + '.</span>';
-                return;
-            }
-            guessesTaken++;
-            totalGuesses++;
-            updateStats();
-                if (userGuess === secretNumber) {
-                levelGuesses.push(guessesTaken);
-                const timeSpent = Math.round((performance.now() - levelStartTime) / 1000);
-                document.getElementById('message').innerHTML = '<span class="success animate-success">🎉 Congratulations! You beat Level ' + currentLevel + ' in ' + guessesTaken + ' guesses! Time: ' + timeSpent + 's</span>';
-                startConfetti(120);
-                currentLevel++;
-                updateStats();
-                saveScore(getPlayerName(), currentLevel - 1, guessesTaken, timeSpent);
-                if (currentLevel > 20) {
-                    document.getElementById('message').innerHTML += '<br><span class="success">Wow! You have beaten all 20 levels. You are a true champion!</span>';
-                    document.getElementById('hint-btn').style.display = 'none';
-                    gameActive = false;
-                    document.getElementById('pause-btn').style.display = 'none';
-                    document.getElementById('restart-btn').style.display = 'inline-block';
-                    // Bigger celebration
-                    startConfetti(300);
-                } else {
-                    setTimeout(startLevel, 2000);
-                }
-            } else {
-                if (guessesTaken >= guessLimit) {
-                    document.getElementById('message').innerHTML = '<span class="failure">Sorry, you ran out of guesses. The number was ' + secretNumber + '. Try this level again.</span>';
-                    setTimeout(startLevel, 3000);
-                } else {
-                    const hint = userGuess > secretNumber ? 'Too high!' : 'Too low!';
-                    const guessesLeft = guessLimit - guessesTaken;
-                    document.getElementById('message').innerHTML = '<span class="info">' + hint + ' You have ' + guessesLeft + ' guesses left.</span>';
-                    // Update range
-                    if (userGuess > secretNumber) {
-                        maxRange = Math.min(maxRange, userGuess - 1);
-                    } else {
-                        minRange = Math.max(minRange, userGuess + 1);
-                    }
-                }
-            }
-            guessInput.value = '';
-        }
-
-        // Player name helper
-        function getPlayerName() {
-            const name = document.getElementById('player-name').value || 'Player';
-            return name.trim() === '' ? 'Player' : name.trim();
-        }
-
-        // Score storage and leaderboard
-        function saveScore(name, level, guesses, timeSpent) {
-            // Record each level completion with time and start level
-            const startLevelVal = parseInt(document.getElementById('start-level').value) || 1;
-            const scores = JSON.parse(localStorage.getItem('kingGuesser_scores') || '[]');
-            const entry = { name: name, levelCompleted: level, guesses: guesses, timeSpentSeconds: timeSpent || 0, startLevel: startLevelVal, date: new Date().toISOString() };
-            scores.push(entry);
-            // Keep only last 200 scores to avoid localStorage bloat
-            if (scores.length > 200) scores.splice(0, scores.length - 200);
-            localStorage.setItem('kingGuesser_scores', JSON.stringify(scores));
-            updateLeaderboard();
-            // If a server is configured, also POST to server
-            if (window.CF_LEADERBOARD_API) postScoreToServer(entry);
-        }
-
-        function getScores() {
-            return JSON.parse(localStorage.getItem('kingGuesser_scores') || '[]');
-        }
-
-        let currentSort = { field: 'guesses', order: 'asc' };
-        let perPage = 10;
-        let currentPage = 1;
-        let externalScores = null; // when viewing global leaderboard
-        let currentMode = 'local';
-        function setPerPage(v) { perPage = parseInt(v) || 10; setPage(1); renderCurrentLeaderboard(); }
-        function setPage(p) { currentPage = Math.max(1, p); renderCurrentLeaderboard(); }
-        function setSort(fld) { if (currentSort.field === fld) currentSort.order = currentSort.order === 'asc' ? 'desc' : 'asc'; else currentSort = { field: fld, order: 'asc' }; updateSortUI(); renderCurrentLeaderboard(); }
-
-        function updateSortUI() {
-            document.querySelectorAll('.sort-btn').forEach(btn => {
-                const s = btn.getAttribute('data-sort');
-                if (!s) btn.innerText = '⇅';
-                else if (s === currentSort.field) btn.innerText = currentSort.order === 'asc' ? '▲' : '▼';
-                else btn.innerText = '⇅';
-            });
-        }
-
-        function renderCurrentLeaderboard() {
-            // Convenience: Pull the current data from scores source
-            const scores = (currentMode === 'global' && externalScores) ? externalScores.slice() : getScores().slice();
-            // Sorting
-            const fld = currentSort.field;
-            const ord = currentSort.order;
-            scores.sort((a,b) => {
-                let va = (fld === 'name') ? (a.name || '').toLowerCase() : (a[fld] || 0);
-                let vb = (fld === 'name') ? (b.name || '').toLowerCase() : (b[fld] || 0);
-                if (fld === 'time') { va = a.timeSpentSeconds || 0; vb = b.timeSpentSeconds || 0; }
-                if (va < vb) return ord === 'asc' ? -1 : 1;
-                if (va > vb) return ord === 'asc' ? 1 : -1;
-                return 0;
-            });
-            // Pagination
-            const total = scores.length;
-            const pages = Math.max(1, Math.ceil(total / perPage));
-            if (currentPage > pages) currentPage = pages;
-            const startIdx = (currentPage - 1) * perPage;
-            const endIdx = startIdx + perPage;
-            const pageItems = scores.slice(startIdx, endIdx);
-            renderLeaderboardTable(pageItems, startIdx);
-            // Update pagination info
-            document.getElementById('page-info').innerText = `Page ${currentPage} / ${pages}`;
-            document.getElementById('prev-page').disabled = currentPage <= 1;
-            document.getElementById('next-page').disabled = currentPage >= pages;
-            updateSortUI();
-        }
-
-        function renderLeaderboardTable(list, offset) {
-            const tbody = document.getElementById('leaderboard-table-body');
-            tbody.innerHTML = '';
-            if (!list || list.length === 0) {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `<td colspan="7" style="text-align:center;color:var(--muted);">No results found</td>`;
-                tbody.appendChild(tr);
-                return;
-            }
-            const me = getPlayerName();
-            list.forEach((s, i) => {
-                const tr = document.createElement('tr');
-                if (s.name === me) tr.classList.add('highlight');
-                const rankTd = `<td class="rank">${offset + i + 1}</td>`;
-                const nameTd = `<td>${escapeHtml(s.name)}</td>`;
-                const levelTd = `<td>Level ${s.levelCompleted}</td>`;
-                const guessesTd = `<td>${s.guesses} g</td>`;
-                const timeTd = `<td>${s.timeSpentSeconds || 0}s</td>`;
-                const startTd = `<td>${s.startLevel}</td>`;
-                const dateTd = `<td>${new Date(s.date).toLocaleString()}</td>`;
-                tr.innerHTML = rankTd + nameTd + levelTd + guessesTd + timeTd + startTd + dateTd;
-                tbody.appendChild(tr);
-            });
-        }
-
-        // utility to call renderCurrentLeaderboard after update
-        function renderScoresWithSortAndPage(scores) { renderCurrentLeaderboard(); }
-
-        // Save external page/sort state to globals for controls
-        window.setPerPage = setPerPage; window.setPage = setPage; window.setSort = setSort;
-
-        function updateLeaderboard(localOnly = true) {
-            const scores = getScores();
-            // Sort: smallest guesses first, then fastest time, then most recent
-            scores.sort((a,b) => (a.guesses - b.guesses) || ((a.timeSpentSeconds || 0) - (b.timeSpentSeconds || 0)) || (new Date(b.date) - new Date(a.date)));
-            // Ensure table body is cleared, we'll render the data into the table
-            document.getElementById('leaderboard-table-body').innerHTML = '';
-            // Update Best per level for current player
-            renderBestPerLevel(getPlayerName());
-            // render leaderboard first page
-            currentPage = 1; renderCurrentLeaderboard();
-            // Show 'highest level reached' for quick metrics
-            const highest = scores.length ? Math.max(...scores.map(s => s.levelCompleted)) : 0;
-            const fastest = scores.length ? Math.min(...scores.map(s => s.timeSpentSeconds || Number.MAX_SAFE_INTEGER)) : '-';
-            // Update top-level metrics text
-            document.getElementById('leaderboard-metrics').innerText = `Local: Highest Level: ${highest} | Fastest Time: ${fastest === Number.MAX_SAFE_INTEGER ? '-' : fastest + 's'}`;
-            document.getElementById('tab-local').classList.add('active');
-            document.getElementById('tab-global').classList.remove('active');
-        }
-
-        function filterMyScores() {
-            const playerName = getPlayerName();
-            const scores = getScores().filter(s => s.name === playerName);
-            scores.sort((a,b) => (a.guesses - b.guesses) || ((a.timeSpentSeconds || 0) - (b.timeSpentSeconds || 0)) || (new Date(b.date) - new Date(a.date)));
-            // Use the table rendering method for filtering
-            if (!scores.length) { document.getElementById('leaderboard-metrics').innerText = 'No scores yet for ' + escapeHtml(playerName) + '.'; document.getElementById('leaderboard-table-body').innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);">No results</td></tr>'; return; }
-            const tableWrap = document.getElementById('leaderboard-table-body');
-            // Re-use render function: set page 1 and render items in the table body
-            currentPage = 1; renderLeaderboardTable(scores.slice(0, perPage), 0);
-        }
-
-        function toggleLeaderboard() {
-            const modal = document.getElementById('leaderboard-modal');
-            const showing = modal.style.display === 'none' || modal.style.display === '' ? false : true;
-            modal.style.display = showing ? 'none' : 'flex';
-            if (!showing) updateLeaderboard();
-        }
-
-        // Server-backed leaderboard - client
-        async function fetchGlobalLeaderboard() {
-            if (!window.CF_LEADERBOARD_API) {
-                document.getElementById('leaderboard-metrics').innerText = 'Global leaderboard not configured. Set an API to view global results.';
-                document.getElementById('leaderboard-table-body').innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);">Global leaderboard not configured.</td></tr>';
-                return;
-            }
-            try {
-                document.getElementById('leaderboard-metrics').innerText = 'Loading global leaderboard...';
-                const resp = await fetch(window.CF_LEADERBOARD_API + '/scores');
-                if (!resp.ok) throw new Error('Failed to fetch global leaderboard');
-                const scores = await resp.json();
-                // simple render
-                const highest = scores.length ? Math.max(...scores.map(s => s.levelCompleted)) : 0;
-                const fastest = scores.length ? Math.min(...scores.map(s => s.timeSpentSeconds || Number.MAX_SAFE_INTEGER)) : '-';
-                const headerTxt = `Global: Highest Level: ${highest} | Fastest Time: ${fastest === Number.MAX_SAFE_INTEGER ? '-' : fastest + 's'} | Global Top: ${Math.min(...scores.map(s => s.guesses)) || '-' }g`;
-                // Set global-scoped scores and switch to global mode, then render
-                externalScores = scores;
-                currentMode = 'global';
-                currentPage = 1;
-                renderCurrentLeaderboard();
-                document.getElementById('leaderboard-metrics').innerText = headerTxt;
-                document.getElementById('tab-global').classList.add('active');
-                document.getElementById('tab-local').classList.remove('active');
-                document.getElementById('tab-global').classList.add('active');
-                document.getElementById('tab-local').classList.remove('active');
-            } catch (err) {
-                console.error('Error fetching global leaderboard:', err);
-                document.getElementById('leaderboard-metrics').innerText = 'Failed to load global leaderboard.';
-                document.getElementById('leaderboard-table-body').innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);">Failed to load global leaderboard.</td></tr>';
-                document.getElementById('tab-global').classList.add('active');
-                document.getElementById('tab-local').classList.remove('active');
-            }
-        }
-
-        async function postScoreToServer(entry) {
-            if (!window.CF_LEADERBOARD_API) return;
-            try {
-                const resp = await fetch(window.CF_LEADERBOARD_API + '/scores', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(entry),
-                });
-                if (!resp.ok) throw new Error('Failed to post score');
-            } catch (err) {
-                console.error('Error posting score to server:', err);
-            }
-        }
-
-        function resetScores() {
-            if (!confirm('Reset all saved scores?')) return;
-            localStorage.removeItem('kingGuesser_scores');
-            updateLeaderboard();
-        }
-
-        function escapeHtml(text) { return text.replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c];}); }
-
-        function renderBestPerLevel(playerName) {
-            const scores = getScores().filter(s => s.name === playerName);
-            if (!scores.length) {
-                document.getElementById('best-list').innerText = '—';
-                return;
-            }
-            const bestByLevel = {};
-            scores.forEach(s => {
-                const level = s.levelCompleted;
-                if (!bestByLevel[level] || s.guesses < bestByLevel[level].guesses || (s.guesses === bestByLevel[level].guesses && (s.timeSpentSeconds || 0) < (bestByLevel[level].timeSpentSeconds || 0))) {
-                    bestByLevel[level] = { guesses: s.guesses, time: (s.timeSpentSeconds || 0) };
-                }
-            });
-            const keys = Object.keys(bestByLevel).sort((a,b)=>a-b);
-            const str = keys.map(k => `L${k}: ${bestByLevel[k].guesses}g/${bestByLevel[k].time}s`).join(' | ');
-            document.getElementById('best-list').innerText = str || '—';
-        }
-
-        // Pause/resume toggle (simple)
-        function togglePause() {
-            gameActive = !gameActive;
-            document.getElementById('pause-btn').innerText = gameActive ? 'Pause' : 'Resume';
-            document.getElementById('start-btn').style.display = gameActive ? 'none' : 'inline-block';
-            document.getElementById('hint-btn').disabled = !gameActive;
-        }
-
-        function restartGame() {
-            startGame();
-        }
-
-        // Allow Enter key to submit
-        document.getElementById('guess-input').addEventListener('keypress', function(event) {
-            if (event.key === 'Enter') {
-                submitGuess();
-            }
+      document
+        .getElementById("nav-leaderboard")
+        ?.addEventListener("click", () => {
+          if (window.Leaderboard) Leaderboard.toggle();
         });
 
-        // Initialize level options and UI on DOM ready
-        document.addEventListener('DOMContentLoaded', () => {
-            const select = document.getElementById('start-level');
-            for (let i = 1; i <= 20; i++) {
-                const opt = document.createElement('option');
-                opt.value = i;
-                opt.text = 'Level ' + i;
-                select.appendChild(opt);
-            }
-            select.value = 1;
-            document.getElementById('level-chosen').innerText = `Start at Level ${select.value}`;
-            select.addEventListener('change', () => {
-                document.getElementById('level-chosen').innerText = `Start at Level ${select.value}`;
-            });
-            // Load player name if previously stored
-            const nameInput = document.getElementById('player-name');
-            const savedName = localStorage.getItem('kingGuesser_playerName');
-            if (savedName) nameInput.value = savedName;
-            nameInput.addEventListener('input', () => { localStorage.setItem('kingGuesser_playerName', nameInput.value); renderBestPerLevel(getPlayerName()); updateStats(); });
-            // Load existing leaderboard
-            updateLeaderboard();
-            updateSortUI();
-            // Load saved API URL
-            // API input removed: global leaderboard requires manual configuration (window.CF_LEADERBOARD_API)
-            // Confetti toggle restore
-            const confettiToggle = document.getElementById('confetti-toggle');
-            const savedConfetti = localStorage.getItem('kingGuesser_confetti');
-            if (savedConfetti !== null) confettiToggle.checked = savedConfetti === '1';
-            confettiToggle.addEventListener('change', () => { localStorage.setItem('kingGuesser_confetti', confettiToggle.checked ? '1' : '0'); });
-            
-            // Sound toggle and volume restore
-            const soundToggle = document.getElementById('sound-toggle');
-            const soundVolume = document.getElementById('sound-volume');
-            const savedSound = localStorage.getItem('kingGuesser_sound');
-            const savedSoundVol = localStorage.getItem('kingGuesser_soundVol');
-            if (savedSound !== null) soundToggle.checked = savedSound === '1';
-            if (savedSoundVol) soundVolume.value = savedSoundVol;
-            soundToggle.addEventListener('change', () => { localStorage.setItem('kingGuesser_sound', soundToggle.checked ? '1' : '0'); });
-            soundVolume.addEventListener('input', () => { localStorage.setItem('kingGuesser_soundVol', soundVolume.value); });
-            // Initialize confetti canvas
-            confettiInit();
-            // Close modal on backdrop click
-            const modal = document.getElementById('leaderboard-modal');
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) toggleLeaderboard();
-            });
-            // Desktop tab initial state
-            document.getElementById('tab-local').classList.add('active');
-            document.getElementById('tab-local').addEventListener('click', () => { document.getElementById('tab-local').classList.add('active'); document.getElementById('tab-global').classList.remove('active'); updateLeaderboard(true); });
-            document.getElementById('tab-global').addEventListener('click', () => { document.getElementById('tab-global').classList.add('active'); document.getElementById('tab-local').classList.remove('active'); fetchGlobalLeaderboard(); });
+      // Show/hide submit button and hint based on game state
+      const observer = new MutationObserver(() => {
+        const startBtn = document.getElementById("start-btn");
+        const submitBtn = document.getElementById("submit-btn");
+        const hintBtn = document.getElementById("hint-btn");
+
+        const gameStarted = startBtn && startBtn.style.display === "none";
+
+        if (submitBtn)
+          submitBtn.style.display = gameStarted ? "inline-flex" : "none";
+        if (hintBtn)
+          hintBtn.style.display = gameStarted ? "inline-flex" : "none";
+      });
+
+      const startBtn = document.getElementById("start-btn");
+      if (startBtn) {
+        observer.observe(startBtn, {
+          attributes: true,
+          attributeFilter: ["style"],
         });
-
-        function saveApiUrl() {
-            const apiInput = document.getElementById('api-url');
-            const val = apiInput.value.trim();
-            if (!val) {
-                delete window.CF_LEADERBOARD_API;
-                localStorage.removeItem('kingGuesser_apiUrl');
-                alert('API URL removed — using local-only leaderboard');
-                return;
-            }
-            // basic validation
-            try {
-                const u = new URL(val);
-                window.CF_LEADERBOARD_API = u.origin;
-                localStorage.setItem('kingGuesser_apiUrl', u.origin);
-                alert('API URL saved. Global leaderboard available.');
-            } catch (e) {
-                alert('Invalid URL');
-            }
-        }
-
-        // Confetti controls and animation
-        let confettiParticles = [];
-        let confettiCtx = null;
-        let confettiCanvas = null;
-        let confettiRunning = false;
-
-        function confettiInit() {
-            confettiCanvas = document.getElementById('confetti-canvas');
-            confettiCtx = confettiCanvas.getContext('2d');
-            function resize() {
-                confettiCanvas.width = window.innerWidth;
-                confettiCanvas.height = window.innerHeight;
-            }
-            window.addEventListener('resize', resize);
-            resize();
-        }
-
-        function createConfettiBurst(count) {
-            const colors = ['#ff3b30', '#ff9500', '#ffcc00', '#34c759', '#5ac8fa', '#007aff', '#5856d6'];
-            const w = confettiCanvas.width; const h = confettiCanvas.height;
-            for (let i=0; i<count; i++) {
-                confettiParticles.push({
-                    x: Math.random() * w,
-                    y: -20 - Math.random()*200,
-                    size: (Math.random() * 8) + 6,
-                    color: colors[Math.floor(Math.random()*colors.length)],
-                    velocityX: (Math.random()-0.5) * 7,
-                    velocityY: Math.random() * 6 + 2,
-                    rotation: Math.random()*360,
-                    rotationSpeed: (Math.random()-0.5) * 10,
-                    ttl: 4000 + Math.random()*2000
-                });
-            }
-        }
-
-        function drawConfetti(time) {
-            if (!confettiRunning) {
-                confettiCtx.clearRect(0,0,confettiCanvas.width, confettiCanvas.height);
-                confettiCanvas.style.display = 'none';
-                return;
-            }
-            confettiCtx.clearRect(0,0,confettiCanvas.width, confettiCanvas.height);
-            const delta = 16; // approx
-            for (let i = confettiParticles.length - 1; i >= 0; i--) {
-                const p = confettiParticles[i];
-                p.x += p.velocityX;
-                p.y += p.velocityY;
-                p.velocityY += 0.15; // gravity
-                p.rotation += p.rotationSpeed;
-                p.ttl -= delta;
-                confettiCtx.save();
-                confettiCtx.translate(p.x, p.y);
-                confettiCtx.rotate(p.rotation * Math.PI / 180);
-                confettiCtx.fillStyle = p.color;
-                confettiCtx.fillRect(-p.size/2, -p.size/2, p.size, p.size*0.6);
-                confettiCtx.restore();
-                if (p.y > confettiCanvas.height + 50 || p.ttl <= 0) {
-                    confettiParticles.splice(i, 1);
-                }
-            }
-            if (confettiParticles.length > 0) {
-                requestAnimationFrame(drawConfetti);
-            } else {
-                confettiRunning = false;
-                confettiCanvas.style.display = 'none';
-            }
-        }
-
-        function startConfetti(burstCount = 120) {
-            if (!document.getElementById('confetti-toggle').checked) return;
-            if (!confettiCanvas) confettiInit();
-            confettiCanvas.style.display = 'block';
-            createConfettiBurst(burstCount);
-            if (!confettiRunning) {
-                confettiRunning = true;
-                requestAnimationFrame(drawConfetti);
-            }
-            // Play celebratory audio at the same time as confetti
-            playCelebrationAudio(burstCount > 200 ? 1.0 : 0.9);
-        }
-
-        function stopConfetti() { confettiParticles = []; confettiRunning = false; if (confettiCanvas) confettiCanvas.style.display = 'none'; }
-
-        // Audio support: WebAudio-based short cheer / applause and optional custom audio URL
-        let audioCtx = null;
-        let audioElement = null;
-        function ensureAudioContext() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            return audioCtx;
-        }
-
-        function playCelebrationAudio(intensity = 1.0) {
-            // Only trigger if sound toggle enabled
-            const soundToggleEl = document.getElementById('sound-toggle');
-            if (!soundToggleEl || !soundToggleEl.checked) return;
-            // If a custom sound URL is set, play via HTMLAudio
-            const soundUrl = (document.getElementById('sound-url') || { value: '' }).value.trim();
-            const vol = parseFloat(document.getElementById('sound-volume').value) || 0.9;
-            if (soundUrl) {
-                try {
-                    if (!audioElement || audioElement.src !== soundUrl) {
-                        audioElement = new Audio(soundUrl);
-                    }
-                    audioElement.volume = Math.min(1, Math.max(0, vol));
-                    audioElement.currentTime = 0;
-                    const playPromise = audioElement.play();
-                    if (playPromise && playPromise.catch) playPromise.catch(() => {});
-                } catch (err) {
-                    // ignore play errors
-                }
-                return;
-            }
-            // Otherwise synthesize a short applause/cheer
-            const ctx = ensureAudioContext();
-            if (ctx.state === 'suspended' && typeof ctx.resume === 'function') {
-                ctx.resume();
-            }
-            const now = ctx.currentTime;
-            const master = ctx.createGain(); master.gain.value = Math.min(1, Math.max(0, vol)); master.connect(ctx.destination);
-            // Small white-noise bursts for applause
-            for (let i = 0; i < 6; i++) {
-                const bufferSize = ctx.sampleRate * 1; // 1 second
-                const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-                const data = buffer.getChannelData(0);
-                for (let j = 0; j < bufferSize; j++) data[j] = (Math.random() * 2 - 1) * (Math.pow(Math.random(), 3));
-                const source = ctx.createBufferSource(); source.buffer = buffer;
-                const band = ctx.createBiquadFilter(); band.type = 'bandpass'; band.frequency.value = 700 + (Math.random()*1200);
-                const g = ctx.createGain();
-                const start = now + i * 0.02;
-                g.gain.setValueAtTime(0.0001, start);
-                g.gain.exponentialRampToValueAtTime((0.06 + Math.random()*0.06) * intensity, start + 0.01);
-                g.gain.exponentialRampToValueAtTime(0.0001, start + 0.6 + Math.random()*0.4);
-                source.connect(band); band.connect(g); g.connect(master);
-                source.start(start);
-                source.stop(start + 1.2);
-            }
-            // Add a short tonal chord to feel celebratory
-            const toneFreqs = [880, 1100, 1320];
-            toneFreqs.forEach((f, idx) => {
-                const osc = ctx.createOscillator(); osc.type = 'sine'; osc.frequency.value = f * (1 + (Math.random() - 0.5) * 0.02);
-                const g = ctx.createGain(); g.gain.value = 0.0001;
-                osc.connect(g); g.connect(master);
-                const tOn = now + 0.03 + idx * 0.02;
-                const tOff = now + 0.6 + idx * 0.06;
-                g.gain.setValueAtTime(0.0001, now);
-                g.gain.exponentialRampToValueAtTime(0.35 * intensity, tOn + 0.01);
-                g.gain.exponentialRampToValueAtTime(0.0001, tOff);
-                osc.start(now);
-                osc.stop(tOff + 0.05);
-            });
-        }
+      }
     </script>
-</body>
+  </body>
 </html>

@@ -1,65 +1,172 @@
-# King Guesser
+# 👑 King Guesser - Master of Numbers
 
-King Guesser is a progressive difficulty guessing game. This version is designed to be responsive and playable on mobile devices and laptops.
+A **jaw-dropping, mobile-first Progressive Web App** featuring a progressive difficulty number guessing game with premium design, stunning animations, and crisp functionality.
 
-## Features
-- 20 levels of increasing difficulty
-- Choose your start level
-- Enter a player name (saved with leaderboard entries)
-- Live stats: total guesses, levels completed, average guesses/level, start-level
-- Hint button that costs one guess and narrows the search range
-- Scores recorded in `localStorage` and displayed in a leaderboard modal
-- Responsive design optimized for mobile and desktop with CSS breakpoints
+![King Guesser Banner](images/og-image.png)
 
-## How to play
-1. Open `index.html` in a web browser (desktop or mobile). You do not need a web server; opening directly in the browser is fine.
-2. Enter your name (optional) and pick a starting level using the dropdown.
-3. Click `Start Game` and guess numbers until you finish the level.
-4. Use the `Hint` button to narrow down the possible range (it costs one guess).
-5. Scores for completed levels are saved in `localStorage` and shown in the 'Leaderboard' modal.
-	- The leaderboard now shows a sortable table with pagination, highlighting the current player's rows and showing a per-player 'Best per level' summary.
-	 - Celebration visuals: the game shows confetti animation on level completion and a larger burst on finishing all levels; disable-able via the 'Confetti' toggle in the header.
-	 - Celebration audio: the game plays a short synthesized applause/chord when you win a level, and a larger celebration when you beat all 20 levels. You can disable sounds via the 'Sound' toggle in the header, provide a custom sound URL, or adjust volume using the slider.
-		- Note: Some browsers disallow audio playback until a user gesture has occurred (e.g., clicking Start Game). If you don't hear audio at first, try clicking within the game once (Start Game) to enable playback.
+## ✨ Features
 
-## Files
-The project includes the following files:
-- `index.html` — Main game UI and client JavaScript
-- `style.css` — All styles for responsive layout and leaderboard
-- `guessing game.js` — Node-based terminal version (kept for compatibility)
-- `cloudflare-worker.js` — Optional Cloudflare Worker for a server-backed global leaderboard (R2)
-- `wrangler.toml` — Wrangler configuration example for Cloudflare
-- `README.md` — This file
+### 🎮 Gameplay
 
-## Cloudflare R2-backed Leaderboard (Optional)
-The repo includes a Cloudflare Worker for storing global leaderboard scores in R2. To set it up:
+- **20 Progressive Levels** - From 1-10 to 1-100,000,000
+- **Hot/Cold Feedback** - Visual temperature indicators show how close your guess is
+- **Smart Hints** - Narrow down the range (costs 1 guess)
+- **Level Journey Map** - Visual progress through all 20 levels
+- **Personal Best Tracking** - Track your fastest times and fewest guesses
 
-1. Create a Cloudflare account (https://dash.cloudflare.com).
-2. Create an R2 bucket and note its name.
-3. Install Wrangler (https://developers.cloudflare.com/workers/cli-wrangler/install).
-4. Set your `wrangler.toml` with the `r2_buckets` section and the bucket name.
-5. Deploy the Worker:
+### 🎨 Premium Design
 
-```bash
-cd "C:\Users\KING MADU\Desktop\New folder"
-wrangler publish
+- **Glassmorphism UI** - Modern frosted glass aesthetic
+- **Vibrant Gradients** - Deep purple to electric blue color scheme
+- **Gold Accents** - Premium touches throughout
+- **Premium Typography** - Outfit + Inter Google Fonts
+
+### ✨ Animations
+
+- **60+ Reusable Animations** - Entrance, exit, attention seekers, and more
+- **Hot/Cold Visual Effects** - Glowing feedback based on proximity
+- **Celebration Confetti** - Canvas-based particle system
+- **Micro-interactions** - Button presses, transitions, pulses
+
+### 📱 Mobile-First
+
+- **Bottom Navigation** - Thumb-friendly action bar
+- **Touch Optimized** - 48px minimum touch targets
+- **Haptic Feedback** - Vibration on mobile devices
+- **Safe Area Support** - Works on notched devices
+
+### 🚀 PWA Capabilities
+
+- **Installable** - Add to home screen on iOS/Android
+- **Offline Support** - Service worker caching
+- **Fast Loading** - Cache-first strategy
+- **Background Sync** - Scores sync when online
+
+## 🛠️ Tech Stack
+
+- **HTML5** - Semantic, accessible markup
+- **CSS3** - Custom properties, glassmorphism, animations
+- **Vanilla JavaScript** - No dependencies, modular architecture
+- **Service Worker** - Offline capability
+- **Web Audio API** - Synthesized sound effects
+- **Canvas API** - Confetti particle system
+
+## 📁 File Structure
+
+```
+GAMES/
+├── index.html          # Main PWA entry point
+├── style.css           # Premium design system
+├── animations.css      # 60+ reusable animations
+├── app.js              # Modular game application
+├── sw.js               # Service worker
+├── manifest.json       # PWA manifest
+├── icons/
+│   ├── icon-512.png    # Main app icon
+│   ├── icon-192.png    # PWA icon
+│   ├── icon-maskable.png
+│   └── apple-touch-icon.png
+├── images/
+│   └── og-image.png    # Social share image
+├── cloudflare-worker.js # Optional global leaderboard
+├── wrangler.toml       # Cloudflare config
+└── README.md           # This file
 ```
 
-6. Once deployed, in the client, open the page and paste your Worker URL into the "Server API" field in the header, then click Save. This stores the Worker URL in browser localStorage for convenience.
+## 🎯 How to Play
 
-Note: The Worker uses an R2 bucket binding named `LEADERBOARD_BUCKET` in `wrangler.toml`. For a production system, add CORS and proper authentication to prevent abuse. Consider rate limiting and server-side validation.
+1. **Open the app** - Works in any modern browser
+2. **Enter your name** - Your scores will be saved
+3. **Choose a start level** - Begin from any unlocked level
+4. **Click Start Game** - Begin your journey!
+5. **Guess the number** - Enter a number and click Submit
+6. **Watch the feedback** - Colors indicate hot (close) or cold (far)
+7. **Use hints wisely** - They narrow the range but cost a guess
+8. **Beat all 20 levels** - Become a champion!
 
-Client configuration:
-- In the game header, enter your deployed worker URL into the "Server API" field and click Save. E.g., `https://king-guesser.example.workers.dev`.
-- When the API URL is set, completed scores are automatically POSTed to the worker; global leaderboard is available through the Leaderboard modal.
+## 🌡️ Hot/Cold System
 
-Developer notes:
-- The Worker is intentionally minimal for demonstration. For production, use signed requests or API keys for authentication, and sanitize inputs server-side before storing.
-- R2 lets you store object data; this simple Worker stores a `scores.json` file which contains an array of score entries.
-## Reset / Reset scores
+| Temperature | Distance | Visual Effect    |
+| ----------- | -------- | ---------------- |
+| 🔥 Burning  | < 1%     | Intense red glow |
+| 🌡️ Hot      | < 5%     | Red pulsing      |
+| ☀️ Warm     | < 15%    | Orange glow      |
+| ❄️ Cool     | < 30%    | Blue tint        |
+| 🥶 Cold     | < 50%    | Cyan pulse       |
+| 🧊 Freezing | > 50%    | Ice blue glow    |
 
-## Notes
-- Scores are saved locally in your browser's `localStorage`. If you use a different browser or clear your local data, scores will disappear.
-- The hint feature consumes a guess. If you have no guesses left it will end the level and restart it.
+## ⚙️ Settings
 
-Enjoy King Guesser!
+- **Sound Effects** - Toggle celebration sounds on/off
+- **Volume Control** - Adjust audio level
+- **Confetti** - Toggle confetti celebrations
+
+## 📊 Leaderboard
+
+- **Local Scores** - Saved in browser storage (up to 200 entries)
+- **Global Scores** - Optional Cloudflare R2 backend
+- **Sortable Columns** - Sort by player, level, guesses, time
+- **Pagination** - Navigate through large score lists
+
+## 🌐 Global Leaderboard Setup (Optional)
+
+1. Create a Cloudflare account
+2. Create an R2 bucket named `king-guesser-leaderboard-bucket`
+3. Deploy the worker:
+   ```bash
+   npx wrangler deploy
+   ```
+4. Set `window.CF_LEADERBOARD_API` to your worker URL
+
+## 🚀 Development
+
+```bash
+# Serve locally (any static server works)
+npx serve .
+
+# Or use Live Server in VS Code
+# Or simply open index.html in a browser
+```
+
+## 📱 PWA Installation
+
+### iOS
+
+1. Open in Safari
+2. Tap the Share button
+3. Tap "Add to Home Screen"
+
+### Android
+
+1. Open in Chrome
+2. Tap the install prompt or menu > Install app
+
+## 🎨 Design System
+
+### Colors
+
+```css
+--color-primary-500: #8b5cf6; /* Purple */
+--color-accent-500: #ec4899; /* Pink */
+--color-success-500: #10b981; /* Green */
+--color-danger-500: #ef4444; /* Red */
+--color-warning-500: #f59e0b; /* Amber */
+```
+
+### Glass Effect
+
+```css
+background: rgba(255, 255, 255, 0.04);
+backdrop-filter: blur(20px);
+border: 1px solid rgba(255, 255, 255, 0.08);
+```
+
+## 📄 License
+
+MIT License - Feel free to use and modify!
+
+---
+
+**Made with 💜 by Kingsley**
+
+Enjoy King Guesser! 👑
