@@ -66,11 +66,6 @@ export function GameApp() {
   const help = useRef<HTMLDialogElement>(null);
   const settings = useRef<HTMLDialogElement>(null);
   useEffect(() => {
-    // Remove the prototype's worker so an upgrade cannot keep serving the old app.
-    navigator.serviceWorker
-      ?.getRegistrations()
-      .then((regs) => Promise.all(regs.map((r) => r.unregister())))
-      .catch(() => {});
     try {
       const saved = JSON.parse(
         localStorage.getItem("king:v2:progress") ?? "null",

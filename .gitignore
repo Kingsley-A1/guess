@@ -7,3 +7,6 @@ node_modules/
 next-env.d.ts
 test-results/
 playwright-report/
+
+# Generated from the exact production build
+/public/sw.js

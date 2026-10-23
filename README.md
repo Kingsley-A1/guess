@@ -58,4 +58,4 @@ Do not create a second project or use a temporary deployment as a substitute. Th
 
 See [the design and architecture notes](docs/direction.md). The new application deliberately starts with a small coherent loop. Public rankings, large lobbies, live chat and paid mechanics are outside this first release.
 
-Offline PWA support is not carried over from the prototype. A one-time worker at the original `/sw.js` URL clears the prototype’s caches, unregisters and refreshes open windows. The new client also unregisters old workers so stale entries cannot keep serving the legacy application.
+Installable PWA with offline adventure and daily play after the first online visit. All six interfaces are available offline; multiplayer always uses the network. Install/update controls live in Settings. See [domain, PWA and multiplayer setup](docs/deployment.md) for Cloudflare/Vercel configuration, exact database variables and production verification.

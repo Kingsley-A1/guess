@@ -1,4 +1,5 @@
 import type { RefObject } from "react";
+import { PwaControls } from "./pwa-controls";
 import { ArrowRight, Settings2, Sparkles, Volume2, X } from "lucide-react";
 type Props = {
   help: RefObject<HTMLDialogElement | null>;
@@ -77,6 +78,7 @@ export function GameDialogs({ help, settings, sound, onSound }: Props) {
           Your adventure progress stays in this browser. No account or tracking
           required. Clearing browser storage will reset it.
         </p>
+        <PwaControls />
         <p>
           Keyboard friendly. Motion follows your device’s reduced-motion
           preference.

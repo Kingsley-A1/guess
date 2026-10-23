@@ -51,4 +51,4 @@ Character illustrations are 35–38 KB WebP files and backgrounds are 10–32 KB
 5. **Earn the right to rank.** Server-issued solo challenges, verified results, transactional score storage, abuse controls and observability must precede public rankings. The current daily secret is intentionally readable client-side.
 6. **Grow the content system.** Define levels as validated data, add an internal puzzle editor and separate rule variants behind the engine contract.
 
-Before a broader release, verify durable rooms on Vercel across independent devices, review service costs under polling load, add automated browser checks in CI, test with screen-reader users, and restore offline support through a deliberate Next.js caching strategy rather than reintroducing the prototype caching strategy.
+Before a broader release, verify durable rooms on Vercel across independent devices, review service costs under polling load, add automated browser checks in CI, test with screen-reader users, and check PWA installation on physical Android and iOS devices. Offline shell caching is versioned with the production build; see [deployment notes](deployment.md).
