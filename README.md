@@ -1,172 +1,58 @@
-# 👑 King Guesser - Master of Numbers
+# King Guesser
 
-A **jaw-dropping, mobile-first Progressive Web App** featuring a progressive difficulty number guessing game with premium design, stunning animations, and crisp functionality.
+A small number adventure with a warm, quiet interface. Built with Next.js App Router, React, TypeScript and Tailwind CSS 4.
 
-![King Guesser Banner](images/og-image.png)
+- Ten progressively harder solo levels, range clues, hints, stars and saved browser progress.
+- A daily puzzle shared by all players, rotating at midnight UTC.
+- Private two-player duels: shared clues, alternating turns, invitation codes, reconnect and mutual rematches.
+- Keyboard controls, reduced-motion support, optional synthesized sound and responsive layouts.
 
-## ✨ Features
+The original vanilla HTML/JS/CSS application is preserved on the [`prototype` branch](https://github.com/Kingsley-A1/guess/tree/prototype), at commit `59fc5a021490eba813fac1b8a718fb2eb983fdf9`.
 
-### 🎮 Gameplay
+## Develop
 
-- **20 Progressive Levels** - From 1-10 to 1-100,000,000
-- **Hot/Cold Feedback** - Visual temperature indicators show how close your guess is
-- **Smart Hints** - Narrow down the range (costs 1 guess)
-- **Level Journey Map** - Visual progress through all 20 levels
-- **Personal Best Tracking** - Track your fastest times and fewest guesses
+Use Node.js 22.9+ (Node 24 is verified) and npm. Use the existing checkout; cloud tasks are isolated and do not need a worktree.
 
-### 🎨 Premium Design
-
-- **Glassmorphism UI** - Modern frosted glass aesthetic
-- **Vibrant Gradients** - Deep purple to electric blue color scheme
-- **Gold Accents** - Premium touches throughout
-- **Premium Typography** - Outfit + Inter Google Fonts
-
-### ✨ Animations
-
-- **60+ Reusable Animations** - Entrance, exit, attention seekers, and more
-- **Hot/Cold Visual Effects** - Glowing feedback based on proximity
-- **Celebration Confetti** - Canvas-based particle system
-- **Micro-interactions** - Button presses, transitions, pulses
-
-### 📱 Mobile-First
-
-- **Bottom Navigation** - Thumb-friendly action bar
-- **Touch Optimized** - 48px minimum touch targets
-- **Haptic Feedback** - Vibration on mobile devices
-- **Safe Area Support** - Works on notched devices
-
-### 🚀 PWA Capabilities
-
-- **Installable** - Add to home screen on iOS/Android
-- **Offline Support** - Service worker caching
-- **Fast Loading** - Cache-first strategy
-- **Background Sync** - Scores sync when online
-
-## 🛠️ Tech Stack
-
-- **HTML5** - Semantic, accessible markup
-- **CSS3** - Custom properties, glassmorphism, animations
-- **Vanilla JavaScript** - No dependencies, modular architecture
-- **Service Worker** - Offline capability
-- **Web Audio API** - Synthesized sound effects
-- **Canvas API** - Confetti particle system
-
-## 📁 File Structure
-
-```
-GAMES/
-├── index.html          # Main PWA entry point
-├── style.css           # Premium design system
-├── animations.css      # 60+ reusable animations
-├── app.js              # Modular game application
-├── sw.js               # Service worker
-├── manifest.json       # PWA manifest
-├── icons/
-│   ├── icon-512.png    # Main app icon
-│   ├── icon-192.png    # PWA icon
-│   ├── icon-maskable.png
-│   └── apple-touch-icon.png
-├── images/
-│   └── og-image.png    # Social share image
-├── cloudflare-worker.js # Optional global leaderboard
-├── wrangler.toml       # Cloudflare config
-└── README.md           # This file
+```sh
+npm ci
+npm run dev
 ```
 
-## 🎯 How to Play
+Open the development server in your browser. No accounts, environment variables or external services are required for solo play. Local multiplayer uses process memory when Redis is not configured; rooms disappear on server restart and are shared only within that process.
 
-1. **Open the app** - Works in any modern browser
-2. **Enter your name** - Your scores will be saved
-3. **Choose a start level** - Begin from any unlocked level
-4. **Click Start Game** - Begin your journey!
-5. **Guess the number** - Enter a number and click Submit
-6. **Watch the feedback** - Colors indicate hot (close) or cold (far)
-7. **Use hints wisely** - They narrow the range but cost a guess
-8. **Beat all 20 levels** - Become a champion!
-
-## 🌡️ Hot/Cold System
-
-| Temperature | Distance | Visual Effect    |
-| ----------- | -------- | ---------------- |
-| 🔥 Burning  | < 1%     | Intense red glow |
-| 🌡️ Hot      | < 5%     | Red pulsing      |
-| ☀️ Warm     | < 15%    | Orange glow      |
-| ❄️ Cool     | < 30%    | Blue tint        |
-| 🥶 Cold     | < 50%    | Cyan pulse       |
-| 🧊 Freezing | > 50%    | Ice blue glow    |
-
-## ⚙️ Settings
-
-- **Sound Effects** - Toggle celebration sounds on/off
-- **Volume Control** - Adjust audio level
-- **Confetti** - Toggle confetti celebrations
-
-## 📊 Leaderboard
-
-- **Local Scores** - Saved in browser storage (up to 200 entries)
-- **Global Scores** - Optional Cloudflare R2 backend
-- **Sortable Columns** - Sort by player, level, guesses, time
-- **Pagination** - Navigate through large score lists
-
-## 🌐 Global Leaderboard Setup (Optional)
-
-1. Create a Cloudflare account
-2. Create an R2 bucket named `king-guesser-leaderboard-bucket`
-3. Deploy the worker:
-   ```bash
-   npx wrangler deploy
-   ```
-4. Set `window.CF_LEADERBOARD_API` to your worker URL
-
-## 🚀 Development
-
-```bash
-# Serve locally (any static server works)
-npx serve .
-
-# Or use Live Server in VS Code
-# Or simply open index.html in a browser
+```sh
+npm test
+npm run typecheck
+npx playwright install chromium
+npm run test:e2e
+npm run build
+npm start
 ```
 
-## 📱 PWA Installation
+## Vercel: existing project
 
-### iOS
+Target: **king-tech-foundation / guess**. The repository's `vercel.json` specifies the Next.js framework, `npm ci`, `npm run build`, and `.next` output, replacing the prototype's static-site configuration. Keep the project root at the repository root. The connected `main` branch should trigger deployment on push.
 
-1. Open in Safari
-2. Tap the Share button
-3. Tap "Add to Home Screen"
+Production multiplayer requires a durable store. In the Vercel project's Storage/Marketplace section, connect **Upstash Redis** and make these variables available to the deployment:
 
-### Android
+- `UPSTASH_REDIS_REST_URL`
+- `UPSTASH_REDIS_REST_TOKEN`
 
-1. Open in Chrome
-2. Tap the install prompt or menu > Install app
+Keep both server-side; do not prefix them with `NEXT_PUBLIC_`, commit their values, or paste them in chat. If the integration uses another prefix, map its values to the names above in Vercel settings. Redeploy after adding them. Without them, the solo app still works, and room endpoints return a clear unavailable response rather than silently using ephemeral memory in production. The managed Redis service may have usage charges; check its plan before provisioning.
 
-## 🎨 Design System
+After deployment, verify solo play, then create a room and join from a separate browser/device. Confirm alternating turns, a winner and a mutual rematch. Production Redis connectivity and multi-instance behavior require this real deployment check; local memory tests do not establish them.
 
-### Colors
+For CLI management, authenticate with `vercel login`, link the existing project explicitly, and inspect its identity before making changes:
 
-```css
---color-primary-500: #8b5cf6; /* Purple */
---color-accent-500: #ec4899; /* Pink */
---color-success-500: #10b981; /* Green */
---color-danger-500: #ef4444; /* Red */
---color-warning-500: #f59e0b; /* Amber */
+```sh
+npx vercel link --scope king-tech-foundation --project guess
+npx vercel project inspect --non-interactive
 ```
 
-### Glass Effect
+Do not create a second project or use a temporary deployment as a substitute. This repository does not contain deployment credentials.
 
-```css
-background: rgba(255, 255, 255, 0.04);
-backdrop-filter: blur(20px);
-border: 1px solid rgba(255, 255, 255, 0.08);
-```
+## Architecture and direction
 
-## 📄 License
+See [the design and architecture notes](docs/direction.md). The new application deliberately starts with a small coherent loop. Public rankings, large lobbies, live chat and paid mechanics are outside this first release.
 
-MIT License - Feel free to use and modify!
-
----
-
-**Made with 💜 by Kingsley**
-
-Enjoy King Guesser! 👑
+Offline PWA support is not carried over from the prototype. A one-time worker at the original `/sw.js` URL clears the prototype’s caches, unregisters and refreshes open windows. The new client also unregisters old workers so stale entries cannot keep serving the legacy application.
