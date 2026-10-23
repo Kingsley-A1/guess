@@ -5,7 +5,10 @@ A small number adventure with a warm, quiet interface. Built with Next.js App Ro
 - Ten progressively harder solo levels, range clues, hints, stars and saved browser progress.
 - A daily puzzle shared by all players, rotating at midnight UTC.
 - Private two-player duels: shared clues, alternating turns, invitation codes, reconnect and mutual rematches.
-- Keyboard controls, reduced-motion support, optional synthesized sound and responsive layouts.
+- Six selectable interfaces: Cobalt Play by default, Friendly Focus second, then Studio Blue, Golden Companion, Midnight Focus and Evergreen Studio.
+- A quiet interface dropdown saves the browser preference and changes presentation without resetting a turn.
+- Keyboard controls, a working number keypad where shown, reduced-motion support, optional synthesized sound and responsive layouts.
+- Self-hosted variable font and optimized static character art; no 3D runtime or external font requests.
 
 The original vanilla HTML/JS/CSS application is preserved on the [`prototype` branch](https://github.com/Kingsley-A1/guess/tree/prototype), at commit `59fc5a021490eba813fac1b8a718fb2eb983fdf9`.
 

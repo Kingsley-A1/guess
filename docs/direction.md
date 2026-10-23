@@ -16,28 +16,31 @@ This migration replaces that structure. The prototype branch preserves the origi
 
 **Friendly duel:** two guests join a private room. The server owns a secret in 1–100. Players alternate, share clues and get twelve collective guesses. Whoever finds the number wins; exhausting the budget ends the round without a winner. Both players must request a rematch, and the starting player alternates. Rooms expire after one hour. This is a slower strategic duel, not simultaneous speed guessing; turn-based play avoids rewarding low latency.
 
-**Interface:** warm paper, forest green, soft gold, an expressive little sun and generous space. One input and one primary action. No sign-up gate, pop-up onboarding, forced sound or automatic loss restart. Start playing immediately, with help available when wanted.
+**Interface:** Cobalt Play is the default, with a real numeric keypad and clear clues. A quiet native dropdown offers Friendly Focus second, followed by Studio Blue, Golden Companion, Midnight Focus and Evergreen Studio. Each shares the same game state and controls; switching never resets a turn or progress. Light variants use small static character illustrations, and dark variants use optimized raster backgrounds. Modes and level selection are tucked behind compact controls. Encouragement stays beside the clue. No sign-up gate, pop-up onboarding, forced sound or automatic loss restart.
 
 ## Boundaries
 
-| Layer                            | Responsibility                                                                     |
-| -------------------------------- | ---------------------------------------------------------------------------------- |
-| `app/page.tsx`, `app/layout.tsx` | Server-rendered document, metadata and entry point                                 |
-| `components/game-app.tsx`        | Client session, mode orchestration and solo interaction                            |
-| `components/game-board.tsx`      | Guess input, clues, results and room presentation                                  |
-| `components/adventure-map.tsx`   | Level selection, completion and unlock presentation                                |
-| `components/game-dialogs.tsx`    | Native accessible help and settings dialogs                                        |
-| `lib/game.ts`                    | Pure immutable rules: guessing, range narrowing, hints, status and stars           |
-| `lib/rooms.ts`                   | Server room transitions, player authentication, sanitized room views and rematches |
-| `lib/room-store.ts`              | Redis durability and optimistic concurrency; memory adapter for local development  |
-| `lib/api.ts`, `app/api/rooms/**` | HTTP validation, rate limits, authentication and no-store responses                |
-| `app/globals.css`                | Tailwind entry, theme tokens, visual components and responsive behavior            |
+| Layer                                         | Responsibility                                                                     |
+| --------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `app/page.tsx`, `app/layout.tsx`              | Server-rendered document, metadata and entry point                                 |
+| `components/game-app.tsx`                     | Client session, mode orchestration and solo interaction                            |
+| `components/game-board.tsx`                   | Guess input, clues, results and room presentation                                  |
+| `components/adventure-map.tsx`                | Level selection, completion and unlock presentation                                |
+| `components/game-dialogs.tsx`                 | Native accessible help and settings dialogs                                        |
+| `lib/interfaces.ts`, `hooks/use-interface.ts` | Validated interface registry, browser persistence and early theme restoration      |
+| `lib/game.ts`                                 | Pure immutable rules: guessing, range narrowing, hints, status and stars           |
+| `lib/rooms.ts`                                | Server room transitions, player authentication, sanitized room views and rematches |
+| `lib/room-store.ts`                           | Redis durability and optimistic concurrency; memory adapter for local development  |
+| `lib/api.ts`, `app/api/rooms/**`              | HTTP validation, rate limits, authentication and no-store responses                |
+| `app/globals.css`                             | Tailwind entry, theme tokens, visual components and responsive behavior            |
 
 Room state has a monotonic version. A Redis Lua compare-and-set updates a room only if its previous version still matches; simultaneous joins or stale guesses cannot overwrite each other. Room secrets are never sent to the browser before the round ends. Player capabilities use random 192-bit tokens; only their hashes are stored with the room, and tokens travel in authorization headers. The invite URL contains the room code, not the player token. Rooms are discoverable only through their random code, limited to two players, and API traffic has short-window rate limits. Do not treat this as a fully hardened ranked competition service.
 
 The UI polls active rooms every two seconds and pauses polling in background tabs. That is appropriate for turn-based duels and simple Vercel hosting, but not a real-time action-game transport. A later realtime layer can replace polling without changing the pure rules.
 
 Solo progress uses a new versioned storage key, preserving legacy browser data. It is device-local, not account-synced. Old score data is not imported because the level ranges and scoring differ.
+
+Character illustrations are 35–38 KB WebP files and backgrounds are 10–32 KB. The active interface loads its own art, and the Latin variable font is self-hosted at 31 KB. Interface choice is stored separately under `king:v2:interface`; the pre-paint bootstrap validates it against the registry. No theme can change a room token, guess budget or game rule.
 
 ## What would make the next version exceptional
 

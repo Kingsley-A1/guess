@@ -1,19 +1,15 @@
 "use client";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import {
-  ArrowRight,
-  ChevronRight,
-  Crown,
-  Heart,
-  HelpCircle,
-  Leaf,
-  Map,
-  Settings2,
-  Sparkles,
-  Star,
-  Sun,
-  Users,
-} from "lucide-react";
+  CrownSimple,
+  GearSix,
+  Question,
+  CaretDown,
+  Palette,
+  X,
+} from "@phosphor-icons/react";
+import { INTERFACES } from "@/lib/interfaces";
+import { useInterface } from "@/hooks/use-interface";
 import { GameBoard } from "./game-board";
 import { AdventureMap } from "./adventure-map";
 import { GameDialogs } from "./game-dialogs";
@@ -50,6 +46,8 @@ async function api(
   return result;
 }
 export function GameApp() {
+  const { selected: interfaceId, choose: chooseInterface } = useInterface();
+  const levels = useRef<HTMLDialogElement>(null);
   const [mode, setMode] = useState<Mode>("adventure");
   const [level, setLevel] = useState(0);
   const [round, setRound] = useState<Round>(() => makeRound(10, 4));
@@ -273,219 +271,133 @@ export function GameApp() {
     window.history.replaceState({}, "", "/");
   }
   const totalStars = progress.stars.reduce((a, b) => a + b, 0);
-  const title =
-    mode === "daily"
-      ? "A fresh little challenge."
-      : mode === "friends"
-        ? "Good guesses. Better company."
-        : "Small guesses.\nBig little victories.";
   return (
     <div className="app-shell">
       <a className="skip-link" href="#play">
         Skip to game
       </a>
-      <aside className="sidebar">
+      <header className="app-header">
         <a href="/" className="brand" aria-label="King Guesser home">
-          <span className="brand-mark">
-            <Crown size={23} />
-          </span>
+          <CrownSimple size={38} weight="fill" />
           <span>
-            king<span className="brand-light">guesser</span>
-            <span className="brand-period">.</span>
+            <b>king</b>guesser
           </span>
         </a>
-        <div className="sidebar-label">A LITTLE PLAY, EVERY DAY</div>
-        <nav aria-label="Game modes">
-          {(
-            [
-              { id: "adventure", icon: Map, label: "The adventure" },
-              { id: "daily", icon: Sun, label: "Daily little puzzle" },
-              { id: "friends", icon: Users, label: "Play with friends" },
-            ] as const
-          ).map((item) => (
-            <button
-              key={item.id}
-              onClick={() => chooseMode(item.id)}
-              className={`nav-item ${mode === item.id ? "active" : ""}`}
-              aria-current={mode === item.id ? "page" : undefined}
+        <div className="select-control mode-control">
+          <select
+            aria-label="Game mode"
+            value={mode}
+            onChange={(e) => chooseMode(e.target.value as Mode)}
+          >
+            <option value="adventure">Adventure</option>
+            <option value="daily">Daily little puzzle</option>
+            <option value="friends">Play with friends</option>
+          </select>
+          <CaretDown size={15} weight="bold" />
+        </div>
+        <div className="header-actions">
+          <div className="select-control interface-control">
+            <Palette size={17} />
+            <select
+              aria-label="Interface"
+              value={interfaceId}
+              onChange={(e) => chooseInterface(e.target.value)}
             >
-              <item.icon size={19} />
-              {item.label}
-              {mode === item.id && <span className="nav-dot" />}
-            </button>
-          ))}
-        </nav>
-        <div className="sidebar-bottom">
-          <div className="small-note">
-            <div className="note-icon">
-              <Leaf size={22} />
-            </div>
-            <strong>A moment for your mind.</strong>
-            <p>
-              No rush. No pressure.
-              <br />
-              Just you and a little curiosity.
-            </p>
-            <span>
-              Made for the joy of it <Heart size={12} />
-            </span>
+              {INTERFACES.map((item) => (
+                <option key={item.id} value={item.id}>
+                  {item.name}
+                </option>
+              ))}
+            </select>
+            <CaretDown size={13} />
           </div>
           <button
-            className="quiet-button"
+            className="icon-button"
             onClick={() => help.current?.showModal()}
+            aria-label="How to play"
           >
-            <HelpCircle size={17} /> How to play <ChevronRight size={15} />
+            <Question size={22} weight="bold" />
+          </button>
+          <button
+            className="icon-button"
+            onClick={() => settings.current?.showModal()}
+            aria-label="Settings"
+          >
+            <GearSix size={21} weight="fill" />
           </button>
         </div>
-      </aside>
+      </header>
       <main className="main-content min-w-0">
-        <header className="topbar">
-          <div className="breadcrumb">
-            Your daily dose of <span>“I got it!”</span>
-            <Sparkles size={15} />
-          </div>
-          <div className="top-actions flex items-center gap-5">
-            <span className="star-total">
-              <Star size={16} fill="currentColor" />
-              {totalStars}
-              <span>/ 30</span>
-            </span>
-            <button
-              className="icon-button"
-              onClick={() => settings.current?.showModal()}
-              aria-label="Settings"
-            >
-              <Settings2 size={19} />
-            </button>
-          </div>
-        </header>
-        <section className="hero relative flex items-center justify-between">
-          <div>
-            <div className="eyebrow">
-              <span /> LITTLE NUMBERS. LOVELY POSSIBILITIES.
-            </div>
-            <h1>{title}</h1>
-            <p>
-              {mode === "friends"
-                ? "Invite your favourite rival. Every clue is a gift to the next player."
-                : mode === "daily"
-                  ? "One puzzle, the same number for everyone. A new beginning every UTC day."
-                  : "Follow the clues. Trust your curiosity. Find the hidden number."}
-              <br />
-              {mode === "adventure" && "Your next “aha!” is just a guess away."}
-            </p>
-          </div>
-          <div className="hero-art" aria-hidden="true">
-            <div className="orbit orbit-one" />
-            <div className="orbit orbit-two" />
-            <span className="art-star s1">✳</span>
-            <span className="art-star s2">✧</span>
-            <span className="art-number n1">7</span>
-            <span className="art-number n2">?</span>
-            <div className="sun-face">
-              <div className="tiny-crown">♛</div>
-              <div className="eyes">
-                <i />
-                <i />
-              </div>
-              <div className="smile" />
-              <div className="cheek left" />
-              <div className="cheek right" />
-            </div>
-            <span className="art-caption">a little closer to brilliant</span>
-            <span className="art-dot" />
-          </div>
-        </section>
-        <div className="content-grid grid items-start">
-          <GameBoard
-            mode={mode}
-            level={level}
-            round={round}
-            room={room}
-            name={name}
-            setName={setName}
-            code={code}
-            setCode={setCode}
-            session={session}
-            busy={busy}
-            connected={connected}
-            error={error}
-            value={value}
-            setValue={setValue}
-            setError={setError}
-            input={input}
-            submit={submit}
-            onCreate={(join) => void openRoom(join)}
-            onReconnect={() => setSession((old) => (old ? { ...old } : null))}
-            onHint={() => {
-              try {
-                record(hint(round));
-                setError("");
-              } catch (e) {
-                setError((e as Error).message);
-              }
-            }}
-            onReplay={() => {
-              if (round.status === "won" && mode === "adventure" && level < 9)
-                chooseLevel(level + 1);
-              else if (mode === "daily") {
-                setRound(dailyRound());
-                setValue("");
-              } else
-                chooseLevel(round.status === "won" && level === 9 ? 0 : level);
-            }}
-            onRematch={() => void roomAction("rematch")}
-            forgetRoom={forgetRoom}
-          />
-
-          <AdventureMap
-            level={level}
-            active={mode === "adventure"}
-            scores={progress.stars}
-            onSelect={(i) => {
-              setMode("adventure");
-              chooseLevel(i);
-            }}
-          />
-        </div>
-        <section className="discovery-row" aria-label="More ways to play">
-          <button
-            className="discovery-card daily-card"
-            onClick={() => chooseMode("daily")}
-          >
-            <span className="discovery-icon">
-              <Sun size={26} />
-            </span>
-            <span>
-              <strong>A fresh puzzle, every day.</strong>
-              <span>Your tiny daily ritual. Same puzzle for everyone.</span>
-            </span>
-            <ArrowRight size={19} />
-          </button>
-          <button
-            className="discovery-card friends-card"
-            onClick={() => chooseMode("friends")}
-          >
-            <span className="discovery-icon">
-              <Users size={25} />
-            </span>
-            <span>
-              <strong>Joy is better shared.</strong>
-              <span>A private duel. A friend. A little friendly rivalry.</span>
-            </span>
-            <ArrowRight size={19} />
-          </button>
-        </section>
-        <footer className="site-footer">
-          <span>
-            <Crown size={14} /> Small game. Big heart.
-          </span>
-          <button onClick={() => help.current?.showModal()}>
-            A little help?
-          </button>
-          <span>Take a breath. Make a guess.</span>
-        </footer>
+        <GameBoard
+          interfaceId={interfaceId}
+          scores={progress.stars}
+          onLevels={() => levels.current?.showModal()}
+          mode={mode}
+          level={level}
+          round={round}
+          room={room}
+          name={name}
+          setName={setName}
+          code={code}
+          setCode={setCode}
+          session={session}
+          busy={busy}
+          connected={connected}
+          error={error}
+          value={value}
+          setValue={setValue}
+          setError={setError}
+          input={input}
+          submit={submit}
+          onCreate={(join) => void openRoom(join)}
+          onReconnect={() => setSession((old) => (old ? { ...old } : null))}
+          onHint={() => {
+            try {
+              record(hint(round));
+              setError("");
+            } catch (e) {
+              setError((e as Error).message);
+            }
+          }}
+          onReplay={() => {
+            if (round.status === "won" && mode === "adventure" && level < 9)
+              chooseLevel(level + 1);
+            else if (mode === "daily") {
+              setRound(dailyRound());
+              setValue("");
+            } else
+              chooseLevel(round.status === "won" && level === 9 ? 0 : level);
+          }}
+          onRematch={() => void roomAction("rematch")}
+          forgetRoom={forgetRoom}
+        />
       </main>
+      <dialog
+        ref={levels}
+        className="modal level-modal"
+        aria-label="Choose a level"
+      >
+        <button
+          className="modal-close icon-button"
+          aria-label="Close levels"
+          onClick={() => levels.current?.close()}
+        >
+          <X size={20} />
+        </button>
+        <AdventureMap
+          level={level}
+          active={mode === "adventure"}
+          scores={progress.stars}
+          onSelect={(index) => {
+            setMode("adventure");
+            chooseLevel(index);
+            levels.current?.close();
+          }}
+        />
+        <p className="total-stars">
+          {totalStars} of 30 stars collected. One little victory at a time.
+        </p>
+      </dialog>
       <GameDialogs
         help={help}
         settings={settings}
