@@ -1,5 +1,11 @@
 import { test, expect } from "@playwright/test";
 
+test.beforeEach(async ({ context }) => {
+  await context.addInitScript(() =>
+    localStorage.setItem("king:v2:welcomed", "true"),
+  );
+});
+
 test("installable manifest, offline launch, six interfaces and gameplay without caching rooms", async ({
   page,
   context,

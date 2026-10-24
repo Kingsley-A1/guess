@@ -1,4 +1,10 @@
 import { test, expect, type Page } from "@playwright/test";
+
+test.beforeEach(async ({ context }) => {
+  await context.addInitScript(() =>
+    localStorage.setItem("king:v2:welcomed", "true"),
+  );
+});
 async function solveSolo(page: Page) {
   for (let n = 0; n < 4; n++) {
     if (await page.locator(".result-number").count()) break;
@@ -64,6 +70,9 @@ test("two independent browsers can duel, reconnect and agree to a rematch", asyn
   await page.getByRole("button", { name: "Create a private room" }).click();
   const code = await page.locator(".room-code").innerText();
   const guestContext = await browser.newContext();
+  await guestContext.addInitScript(() =>
+    localStorage.setItem("king:v2:welcomed", "true"),
+  );
   const guest = await guestContext.newPage();
   try {
     await guest.goto(`${baseURL}/?room=${code}`);

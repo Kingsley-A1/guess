@@ -2489,3 +2489,35 @@ button {
     height: 62px;
   }
 }
+
+.welcome-dialog {
+  max-width: 440px;
+  text-align: center;
+}
+.welcome-crown {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: var(--surface-hover);
+  color: var(--ink);
+}
+.welcome-dialog h2 {
+  margin: 22px 0 10px;
+}
+.welcome-dialog .welcome-tagline {
+  color: var(--ink);
+  font-weight: 700;
+  margin-bottom: 18px;
+}
+.welcome-dialog .primary-button {
+  width: 100%;
+  justify-content: center;
+}
+.welcome-dialog .welcome-note {
+  font-size: 12px;
+  margin: 18px 0 0;
+}

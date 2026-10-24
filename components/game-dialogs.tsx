@@ -1,4 +1,5 @@
 import type { RefObject } from "react";
+import { WelcomeDialog } from "./welcome-dialog";
 import { PwaControls } from "./pwa-controls";
 import { ArrowRight, Settings2, Sparkles, Volume2, X } from "lucide-react";
 type Props = {
@@ -10,6 +11,7 @@ type Props = {
 export function GameDialogs({ help, settings, sound, onSound }: Props) {
   return (
     <>
+      <WelcomeDialog />
       <dialog ref={help} className="modal">
         <button
           className="modal-close icon-button"

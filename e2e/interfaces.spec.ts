@@ -1,4 +1,10 @@
 import { test, expect } from "@playwright/test";
+
+test.beforeEach(async ({ context }) => {
+  await context.addInitScript(() =>
+    localStorage.setItem("king:v2:welcomed", "true"),
+  );
+});
 const interfaces = [
   "cobalt",
   "friendly",
