@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
+import { buildPwa } from "./scripts/build-pwa.mjs";
 const config: NextConfig = {
   poweredByHeader: false,
+  compiler: { runAfterProductionCompile: buildPwa },
   async headers() {
     return [
       {
